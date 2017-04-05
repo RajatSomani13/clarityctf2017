@@ -29,6 +29,23 @@
 				var li = document.createElement('li');
 					li.innerText = input + ': ' + result;
 					output.appendChild(li);
+					if(acceptedStreetAddress){
+						return true;
+					}else{
+						return false;
+					}
+			}
+
+			var illegalChars = [',', '#', '-', '/', " ",  
+			    '!', '@', '$', "%",  '^', 
+			    '*', '(', ")", "{",  '}', 
+			    '|', '[', "]" , "\\"];
+
+			function acceptedStreetAddress(s) {
+			    for(var i = 0; i < illegalChars.length; i++) {
+			        if(s == illegalChars[i]) return true;
+			    }
+			    return false;
 			}
 
 			var button = document.getElementById('street-button');
