@@ -41,6 +41,7 @@
 		<script type="text/javascript">
 
 			var GRAFFITI_DATASET_URL = 'https://data.cityofchicago.org/resource/cdmx-wzbz.json';
+			var ERROR_HANDLING_URL = 'https://data.cityofchicago.org/resource/byhn-gzba.json';
 
 			/*
 			 * Here is a nice function that prints a list of graffiti reports to a given HTML element
@@ -143,20 +144,28 @@
 			 * However, these two calls are asynchronously-challenged... you need to fix them!
 			 */
 
-			var graffitiData = $.get(GRAFFITI_DATASET_URL, {
+			$.get(GRAFFITI_DATASET_URL, {
 				'completion_date': '2017-03-31T00:00:00.000',
 				'status': 'Completed',
 				'$limit': 5
+			}).done(function(data){
+				var out5 = document.getElementById('output-bad-callback');
+				outputGraffiti(out5, data);
+			}).fail(function(err){
+				console.error(err);
 			});
 
-			var out5 = document.getElementById('output-bad-callback');
-			outputGraffiti(out5, graffitiData);
+			
 
 			var promise2 = new Promise(function(resolve, reject){
 				$.get(GRAFFITI_DATASET_URL, {
 					'completion_date': '2017-03-31T00:00:00.000',
 					'status': 'Completed',
 					'$limit': 5
+				}).done(function(data){
+					resolve(data);
+				}).fail(function(err){
+					reject(err.statusText);
 				});
 			});
 
@@ -174,6 +183,25 @@
 			 * Output the results to #output-brick-unpainted
 			 */
 
+			 var promise5 = new Promise(function(resolve, reject){
+				$.get(GRAFFITI_DATASET_URL, {
+					'completion_date': '2017-03-31T00:00:00.000',
+					'status': 'Completed',
+					'what_type_of_surface_is_the_graffiti_on_':'Brick - Unpainted'
+				}).done(function(data){
+					resolve(data);
+				}).fail(function(err){
+					reject(err.statusText);
+				});
+			});
+
+			promise5.then(function(data){
+				var out7 = document.getElementById('output-brick-unpainted');
+				outputGraffiti(out7, data);
+			}).catch(function(err){
+				console.error(err);
+			});
+
 			// STUB: Write your own AJAX call
 
 			/*
@@ -182,7 +210,24 @@
 			 * Handle the error and then display Socrata response code to #output-error using .innerText
 			 * Hint: The code you are looking for is not 404, it's not a number
 			 */
+			 var promise6 = new Promise(function(resolve, reject){
+				$.get(ERROR_HANDLING_URL, {
+				}).done(function(data){
+					resolve(data);
+				}).fail(function(err){
+					console.log("herer");
+					var out9 = document.getElementById('output-error');
+					out9.innerHTML = err["responseJSON"]["code"];
+					console.log(err["responseJSON"]["code"]);
+					outputGraffiti(out9, err["responseJSON"]["code"]);
+					// resolve(data);
+				});
+			});
 
+			promise6.then(function(data){
+			}).catch(function(err){
+				console.error(err);
+			});
 			// STUB: Handle the AJAX Error
 
 		</script>
